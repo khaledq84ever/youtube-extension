@@ -1,11 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>YTGet</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles/popup.css" />
 </head>
 <body>
@@ -13,58 +14,116 @@
 
     <header class="header">
       <div class="brand">
-        <div class="brand-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <div class="brand-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
             <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.6 3.6 12 3.6 12 3.6s-7.6 0-9.4.5A3 3 0 0 0 .5 6.2C0 8 0 12 0 12s0 4 .5 5.8a3 3 0 0 0 2.1 2.1c1.8.5 9.4.5 9.4.5s7.6 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.8.5-5.8.5-5.8s0-4-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/>
           </svg>
         </div>
         <span class="brand-name">YTGet</span>
       </div>
-      <span class="version-badge">v1.0</span>
+      <div class="header-actions">
+        <span class="version-badge" aria-label="Version 1.2.0">v1.2</span>
+        <button id="settingsBtn" class="icon-btn" aria-label="Open settings" aria-expanded="false" aria-controls="settingsDrawer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
     </header>
 
-    <p class="hint">Download buttons appear on every watch page while you browse <strong>YouTube</strong>. MP3 320K or MP4 720p.</p>
+    <section id="settingsDrawer" class="settings-drawer" hidden aria-label="Settings">
+      <div class="setting-row">
+        <label class="toggle" for="setInPage">
+          <span class="setting-label">In-page download buttons</span>
+          <input type="checkbox" id="setInPage" checked />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </label>
+      </div>
+      <div class="setting-row setting-row-stack">
+        <label for="setFilename" class="setting-label">Filename template</label>
+        <input id="setFilename" class="setting-input" type="text" placeholder="{uploader}_{title}" />
+      </div>
+      <div class="setting-row setting-row-stack">
+        <label for="setFormat" class="setting-label">Default format</label>
+        <select id="setFormat" class="setting-select">
+          <option value="mp3">MP3 audio</option>
+          <option value="mp4">MP4 video</option>
+        </select>
+      </div>
+      <div class="setting-row setting-row-stack">
+        <label for="setQuality" class="setting-label">Default quality</label>
+        <select id="setQuality" class="setting-select">
+          <option value="320K">320 kbps · Best</option>
+          <option value="256K">256 kbps</option>
+          <option value="192K">192 kbps</option>
+          <option value="128K">128 kbps</option>
+          <option value="1080p">1080p Full HD</option>
+          <option value="720p">720p HD</option>
+          <option value="480p">480p</option>
+          <option value="360p">360p</option>
+        </select>
+      </div>
+    </section>
 
-    <div class="divider"><span>or paste a YouTube URL</span></div>
-
-    <div class="input-wrap">
-      <svg class="input-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-      <input id="urlInput" type="url" placeholder="https://youtube.com/watch?v=… or youtu.be/…" autocomplete="off" spellcheck="false" />
+    <div class="hint-card">
+      <div class="hint-head">
+        <span id="apiPing" class="status-dot" data-state="checking" role="img" aria-label="API status"></span>
+        <span class="hint-title">How it works</span>
+        <span id="apiPingLabel" class="hint-status-label">Checking…</span>
+      </div>
+      <p class="hint-body">Download buttons appear on every watch page while you browse <strong>YouTube</strong>. MP3 up to 320K or MP4 up to 1080p.</p>
     </div>
 
-    <div id="errorBox" class="error-box" style="display:none"></div>
+    <div class="divider"><span>or paste a URL</span></div>
 
-    <button id="fetchBtn" class="fetch-btn">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      Get Video
+    <div class="input-wrap">
+      <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      <input id="urlInput" type="url" placeholder=" " autocomplete="off" spellcheck="false" aria-label="YouTube URL" />
+      <label for="urlInput" class="floating-label">YouTube URL</label>
+      <button id="pasteBtn" class="paste-btn" aria-label="Paste from clipboard" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+      </button>
+    </div>
+
+    <div id="errorBox" class="error-box" role="alert" hidden></div>
+
+    <button id="fetchBtn" class="fetch-btn" aria-label="Fetch video info">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span class="btn-label">Get Video</span>
     </button>
 
-    <div id="resultCard" class="result-card" style="display:none">
-      <div class="result-thumb-row">
-        <div class="result-info">
+    <div id="resultCard" class="result-card" hidden role="region" aria-label="Result">
+      <div class="result-head">
+        <div id="resultThumb" class="result-thumb" aria-hidden="true"><div class="thumb-shimmer"></div></div>
+        <div class="result-meta-col">
           <div id="resultTitle" class="result-title"></div>
           <div id="resultMeta" class="result-meta"></div>
         </div>
       </div>
-      <div class="format-tabs">
-        <button id="tabMp3" class="format-tab active" data-fmt="mp3">MP3</button>
-        <button id="tabMp4" class="format-tab" data-fmt="mp4">MP4</button>
+      <div class="format-tabs" role="tablist" aria-label="Format">
+        <button id="tabMp3" class="format-tab active" role="tab" aria-selected="true" data-fmt="mp3" type="button">MP3</button>
+        <button id="tabMp4" class="format-tab" role="tab" aria-selected="false" data-fmt="mp4" type="button">MP4</button>
       </div>
-      <div id="actionRow" class="action-row"></div>
+      <div id="actionRow" class="action-row action-grid"></div>
     </div>
 
-    <div id="progressWrap" class="progress-wrap" style="display:none">
+    <div id="progressWrap" class="progress-wrap" hidden role="status" aria-live="polite">
       <div class="progress-track">
         <div id="progressBar" class="progress-fill"></div>
       </div>
       <div id="progressLabel" class="progress-label">Starting…</div>
     </div>
 
+    <div id="toastHost" class="toast-host" aria-live="polite" aria-atomic="false"></div>
+
     <footer class="footer">
-      <span class="footer-credit">
-        Programmed By
-        <a href="https://x.com/KhaledQ84Ever" target="_blank" rel="noopener noreferrer" class="footer-link">@KhaledQ84Ever</a>
-      </span>
+      <a href="https://x.com/KhaledQ84Ever" target="_blank" rel="noopener noreferrer" class="footer-card" aria-label="Creator on X: KhaledQ84Ever">
+        <span class="footer-mark" aria-hidden="true">◆</span>
+        <span class="footer-text">
+          <span class="footer-line">Programmed By</span>
+          <span class="footer-handle">@KhaledQ84Ever</span>
+        </span>
+        <svg class="footer-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+      </a>
+      <span class="footer-sub">made with <span class="heart" aria-hidden="true">♥</span> in Kuwait</span>
     </footer>
 
   </div>
