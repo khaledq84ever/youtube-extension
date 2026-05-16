@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "YTGet — YouTube to MP3/MP4",
   "description": "Download YouTube videos as MP3 or MP4 — powered by youtube-mp3-downloader-production-c1e2.up.railway.app",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "action": {
     "default_popup": "src/popup.html",
     "default_title": "YTGet Downloader"
@@ -45,7 +45,7 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "ytget@khaledq8",
-      "strict_min_version": "109.0"
+      "strict_min_version": "121.0"
     }
   }
 }
