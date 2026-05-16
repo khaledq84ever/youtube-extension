@@ -1,0 +1,101 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Compute version
+        id: ver
+        run: echo "v=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Validate manifest
+        run: python3 -m json.tool manifest.json > /dev/null
+
+      - name: Build packages
+        run: |
+          mkdir -p dist
+          NAME="youtube-extension-v${{ steps.ver.outputs.v }}"
+          zip -rq dist/${NAME}-chrome.zip   manifest.json src assets
+          cp dist/${NAME}-chrome.zip dist/${NAME}-edge.zip
+          cp dist/${NAME}-chrome.zip dist/${NAME}-firefox.xpi
+          ls -lh dist/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "v${{ steps.ver.outputs.v }} — YTGet"
+          generate_release_notes: true
+          files: |
+            dist/youtube-extension-v${{ steps.ver.outputs.v }}-chrome.zip
+            dist/youtube-extension-v${{ steps.ver.outputs.v }}-edge.zip
+            dist/youtube-extension-v${{ steps.ver.outputs.v }}-firefox.xpi
+
+      # ── Chrome Web Store ──────────────────────────────────────────
+      - name: Publish to Chrome Web Store
+        if: env.CWS_EXTENSION_ID != ''
+        env:
+          CWS_EXTENSION_ID:  ${{ secrets.CWS_EXTENSION_ID }}
+          CWS_CLIENT_ID:     ${{ secrets.CWS_CLIENT_ID }}
+          CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+        run: |
+          npx -y chrome-webstore-upload-cli@3 upload \
+            --source dist/youtube-extension-v${{ steps.ver.outputs.v }}-chrome.zip \
+            --extension-id "$CWS_EXTENSION_ID" \
+            --client-id "$CWS_CLIENT_ID" \
+            --client-secret "$CWS_CLIENT_SECRET" \
+            --refresh-token "$CWS_REFRESH_TOKEN" \
+            --auto-publish
+
+      # ── Firefox Add-ons (AMO) ────────────────────────────────────
+      - name: Publish to Firefox Add-ons
+        if: env.AMO_JWT_ISSUER != ''
+        env:
+          AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
+          AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+        run: |
+          npx -y web-ext@8 sign \
+            --source-dir . \
+            --artifacts-dir dist \
+            --api-key "$AMO_JWT_ISSUER" \
+            --api-secret "$AMO_JWT_SECRET" \
+            --channel listed
+
+      # ── Edge Add-ons ─────────────────────────────────────────────
+      - name: Publish to Edge Add-ons
+        if: env.EDGE_PRODUCT_ID != ''
+        env:
+          EDGE_PRODUCT_ID:    ${{ secrets.EDGE_PRODUCT_ID }}
+          EDGE_CLIENT_ID:     ${{ secrets.EDGE_CLIENT_ID }}
+          EDGE_API_KEY:       ${{ secrets.EDGE_API_KEY }}
+        run: |
+          # Upload package
+          UPLOAD_RESPONSE=$(curl -sS -X POST \
+            "https://api.addons.microsoftedge.microsoft.com/v1/products/${EDGE_PRODUCT_ID}/submissions/draft/package" \
+            -H "Authorization: ApiKey ${EDGE_API_KEY}" \
+            -H "X-ClientID: ${EDGE_CLIENT_ID}" \
+            -H "Content-Type: application/zip" \
+            --data-binary "@dist/youtube-extension-v${{ steps.ver.outputs.v }}-edge.zip" \
+            -w "\n%{http_code}")
+          echo "Upload: $UPLOAD_RESPONSE"
+          # Publish draft
+          curl -sS -X POST \
+            "https://api.addons.microsoftedge.microsoft.com/v1/products/${EDGE_PRODUCT_ID}/submissions" \
+            -H "Authorization: ApiKey ${EDGE_API_KEY}" \
+            -H "X-ClientID: ${EDGE_CLIENT_ID}" \
+            -H "Content-Length: 0"
