@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>YTGet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/popup.css" />
+</head>
+<body>
+  <div class="shell">
+
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.6 3.6 12 3.6 12 3.6s-7.6 0-9.4.5A3 3 0 0 0 .5 6.2C0 8 0 12 0 12s0 4 .5 5.8a3 3 0 0 0 2.1 2.1c1.8.5 9.4.5 9.4.5s7.6 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.8.5-5.8.5-5.8s0-4-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/>
+          </svg>
+        </div>
+        <span class="brand-name">YTGet</span>
+      </div>
+      <span class="version-badge">v1.0</span>
+    </header>
+
+    <p class="hint">Download buttons appear on every watch page while you browse <strong>YouTube</strong>. MP3 320K or MP4 720p.</p>
+
+    <div class="divider"><span>or paste a YouTube URL</span></div>
+
+    <div class="input-wrap">
+      <svg class="input-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      <input id="urlInput" type="url" placeholder="https://youtube.com/watch?v=… or youtu.be/…" autocomplete="off" spellcheck="false" />
+    </div>
+
+    <div id="errorBox" class="error-box" style="display:none"></div>
+
+    <button id="fetchBtn" class="fetch-btn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Get Video
+    </button>
+
+    <div id="resultCard" class="result-card" style="display:none">
+      <div class="result-thumb-row">
+        <div class="result-info">
+          <div id="resultTitle" class="result-title"></div>
+          <div id="resultMeta" class="result-meta"></div>
+        </div>
+      </div>
+      <div class="format-tabs">
+        <button id="tabMp3" class="format-tab active" data-fmt="mp3">MP3</button>
+        <button id="tabMp4" class="format-tab" data-fmt="mp4">MP4</button>
+      </div>
+      <div id="actionRow" class="action-row"></div>
+    </div>
+
+    <div id="progressWrap" class="progress-wrap" style="display:none">
+      <div class="progress-track">
+        <div id="progressBar" class="progress-fill"></div>
+      </div>
+      <div id="progressLabel" class="progress-label">Starting…</div>
+    </div>
+
+    <footer class="footer">
+      <span class="footer-credit">
+        Programmed by
+        <a href="https://x.com/KhaledQ84Ever" target="_blank" class="footer-link">@KhaledQ84Ever</a>
+      </span>
+    </footer>
+
+  </div>
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

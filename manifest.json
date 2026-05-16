@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "YTGet — YouTube to MP3/MP4",
+  "description": "Download YouTube videos as MP3 or MP4 — powered by youtube-mp3-downloader-production-c1e2.up.railway.app",
+  "version": "1.0.0",
+  "action": {
+    "default_popup": "src/popup.html",
+    "default_title": "YTGet Downloader"
+  },
+  "icons": {
+    "16": "assets/icon-16.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "downloads",
+    "storage",
+    "contextMenus"
+  ],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://youtube.com/*",
+    "https://m.youtube.com/*",
+    "https://music.youtube.com/*",
+    "https://youtu.be/*",
+    "https://youtube-mp3-downloader-production-c1e2.up.railway.app/*"
+  ],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://m.youtube.com/*",
+        "https://music.youtube.com/*"
+      ],
+      "js": ["src/content.js"],
+      "css": ["src/styles/inject.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "ytget@khaledq8",
+      "strict_min_version": "109.0"
+    }
+  }
+}
