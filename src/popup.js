@@ -59,7 +59,8 @@ function setProgress(pct, label) {
 function hideProgress() { hide(progressWrap); progressBar.style.width = '0%'; }
 
 function sanitize(name) {
-  return (name || 'download')
+  const s = String(name ?? '').trim();
+  return (s || 'download')
     .replace(/[^\w.\-]/g, '_')
     .replace(/_+/g, '_')
     .replace(/^_|_$/g, '') || 'download';
@@ -297,10 +298,12 @@ async function fetchInfo() {
     currentInfo = { ...data, url };
     resultTitle.textContent = data.title || 'YouTube Video';
 
+    const CLOCK_SVG = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
+    const USER_SVG  = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
     resultMeta.innerHTML = '';
-    if (data.uploader) resultMeta.innerHTML += `<span class="meta-chip">${data.uploader}</span>`;
+    if (data.uploader) resultMeta.innerHTML += `<span class="meta-chip">${USER_SVG} ${data.uploader}</span>`;
     const dur = formatDuration(data.duration_sec);
-    if (dur) resultMeta.innerHTML += `<span class="meta-chip">⏱ ${dur}</span>`;
+    if (dur) resultMeta.innerHTML += `<span class="meta-chip">${CLOCK_SVG} ${dur}</span>`;
 
     if (data.thumbnail) {
       resultThumb.style.backgroundImage = `url("${data.thumbnail}")`;
@@ -346,9 +349,11 @@ urlInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') fetchInfo()
   currentFmt = settings.defaultFormat || 'mp3';
   syncFormatTabs();
   ext.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
-    if (!tab?.url) return;
-    if (/youtube\.com\/watch\?/.test(tab.url) || /youtu\.be\//.test(tab.url) || /youtube\.com\/shorts\//.test(tab.url)) {
+    if (tab?.url && (/youtube\.com\/watch\?/.test(tab.url) || /youtu\.be\//.test(tab.url) || /youtube\.com\/shorts\//.test(tab.url))) {
       urlInput.value = tab.url.split('&')[0];
+      fetchInfo();
+    } else {
+      urlInput.focus();
     }
   });
 })();

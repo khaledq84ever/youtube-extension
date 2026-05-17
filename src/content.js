@@ -36,7 +36,8 @@ async function pollStatus(jobId) {
 }
 
 function sanitize(name) {
-  return (name || 'download')
+  const s = String(name ?? '').trim();
+  return (s || 'download')
     .replace(/[^\w.\-]/g, '_')
     .replace(/_+/g, '_')
     .replace(/^_|_$/g, '') || 'download';

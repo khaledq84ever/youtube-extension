@@ -1,6 +1,30 @@
 const ext = typeof browser !== 'undefined' ? browser : chrome;
 
-ext.runtime.onInstalled.addListener(() => {
+const ACTIVE_RE = /^https?:\/\/((www|m|music)\.)?(youtube\.com|youtu\.be)\//i;
+
+function setTabState(tabId, isActive) {
+  if (!ext.action?.setBadgeText) return;
+  ext.action.setBadgeBackgroundColor({ color: isActive ? '#10B981' : '#3F3F46', tabId });
+  ext.action.setBadgeText({ text: isActive ? '' : '○', tabId });
+  ext.action.setTitle({
+    title: isActive ? 'YTGet — ready on this page' : 'YTGet — open a YouTube video',
+    tabId
+  });
+}
+
+function refreshTab(tabId) {
+  ext.tabs.get(tabId, (tab) => {
+    if (ext.runtime.lastError || !tab) return;
+    setTabState(tabId, ACTIVE_RE.test(tab.url || ''));
+  });
+}
+
+ext.tabs.onActivated.addListener(({ tabId }) => refreshTab(tabId));
+ext.tabs.onUpdated.addListener((tabId, info) => {
+  if (info.url || info.status === 'complete') refreshTab(tabId);
+});
+
+ext.runtime.onInstalled.addListener(({ reason }) => {
   ext.contextMenus.create({
     id: 'yt-download',
     title: 'Download with YTGet',
@@ -13,6 +37,10 @@ ext.runtime.onInstalled.addListener(() => {
       '*://youtu.be/*'
     ]
   });
+
+  if (reason === 'install') {
+    ext.tabs.create({ url: ext.runtime.getURL('src/welcome.html') });
+  }
 });
 
 ext.contextMenus.onClicked.addListener((info, tab) => {
@@ -21,7 +49,8 @@ ext.contextMenus.onClicked.addListener((info, tab) => {
 });
 
 function sanitize(name) {
-  return (name || 'download')
+  const s = String(name ?? '').trim();
+  return (s || 'download')
     .replace(/[^\w.\-]/g, '_')
     .replace(/_+/g, '_')
     .replace(/^_|_$/g, '') || 'download';
@@ -30,7 +59,8 @@ function sanitize(name) {
 ext.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg.type !== 'YT_DOWNLOAD') return false;
 
-  const safeFile = sanitize(msg.filename.replace('YTGet/', ''));
+  const raw = String(msg.filename ?? '').replace(/^YTGet\//, '');
+  const safeFile = sanitize(raw);
   const filename = `YTGet/${safeFile}`;
 
   ext.downloads.download(
