@@ -15,6 +15,16 @@
 
 ---
 
+## 🌐 Website
+
+No extension needed — use it straight from the browser:
+
+**https://youtube-mp3-downloader-production-c1e2.up.railway.app**
+
+Paste any YouTube link → download MP3 or MP4.
+
+Get this extension (and its siblings for YouTube, Twitter, Instagram, TikTok) from the download hub: **https://getpack-production.up.railway.app**
+
 ## Features
 
 - **MP3** — 128, 192, 256, or **320 kbps** (best)
