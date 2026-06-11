@@ -186,7 +186,7 @@ async function apiPost(path, body) {
 }
 
 async function pollStatus(jobId, btn) {
-  for (let i = 0; i < 240; i++) {
+  for (let i = 0; i < 380; i++) {
     await new Promise(r => setTimeout(r, 500));
     const r = await fetch(`${API}/status/${jobId}`);
     const d = await r.json();
